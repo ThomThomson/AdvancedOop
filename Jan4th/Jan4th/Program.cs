@@ -4,24 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication1
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            while (true)
-            {
-                if (Console.KeyAvailable)
-                {
+namespace Jan4thIO {
+    class Program {
+        static void Main(string[] args) {
+            while (true) {
+                if (Console.KeyAvailable) {
                     Console.WriteLine("HIT DAT I KEY PLZ");
                     ConsoleKeyInfo fartKey = Console.ReadKey(true);
-                    if (fartKey.Key == ConsoleKey.X)
-                    {
+                    if (fartKey.Key == ConsoleKey.X) {
                         Console.WriteLine("AW SHIT YOU TYPED X");
-                    }
-                    else
-                    {
+                    } else {
                         Console.WriteLine("YOU DID NOT TYPE X");
                     }
                 }

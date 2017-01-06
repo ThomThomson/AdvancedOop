@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{674E1EF6-3BC7-46B4-8957-D47EA0F4CB35}</ProjectGuid>
+    <ProjectGuid>{D9BD72AA-CF1C-408D-BF4D-C5B0C54F3B54}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>jan4th</RootNamespace>
-    <AssemblyName>jan4th</AssemblyName>
+    <RootNamespace>Jan6thClientSolution</RootNamespace>
+    <AssemblyName>Jan6thClientSolution</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
