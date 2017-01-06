@@ -27,7 +27,7 @@ namespace ConsoleApplication1
                 }
                 //This will only run due to the key available if statement. Otherwise it will wait each time.
                 Console.WriteLine("Listening...");
-            }           
+            }
         }
     }
 }
