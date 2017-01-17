@@ -7,18 +7,15 @@ using ChatLib;
 
 namespace ChatConsole { 
     class Program{
-        private static String userName = "";
         private static String message;
         private static ChatParent chat;
         static void Main(string[] args){
             if(args.Length > 0 && args[0] == "-server"){
-                userName = "ServerUser";
                 chat = new Server(13000, "127.0.0.1");
                 Console.WriteLine("Server startup...");
                 Server server = chat as Server;
                 Console.WriteLine(server.waitForConnection());
             }else if (args.Length == 0){
-                userName = "clientUser";
                 chat = new Client(13000, "127.0.0.1");
                 Console.WriteLine("Client startup...");
             } else {
@@ -32,11 +29,21 @@ namespace ChatConsole {
                     if (inputKey.Key == ConsoleKey.I) {
                         Console.Write(">>");
                         message = Console.ReadLine();
-                        chat.sendMessage(message);
+                        if (message.Equals("quit")) {
+                            chat.sendMessage(message);
+                            chat.disconnect();
+                            Environment.Exit(0);
+                        } else {
+                            chat.sendMessage(message);
+                        }                        
                     }
                 }
                 String currentMessage = chat.recieveMessage();
-                if (currentMessage.Length > 0) {
+                if (currentMessage.Equals("quit")) {
+                    chat.disconnect();
+                    Environment.Exit(0);
+                }
+                else if (currentMessage.Length > 0) {
                     Console.WriteLine(currentMessage);
                 }
             }

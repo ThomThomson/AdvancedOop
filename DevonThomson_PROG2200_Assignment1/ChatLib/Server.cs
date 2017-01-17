@@ -24,7 +24,7 @@ namespace ChatLib {
             try {
                 server.Start();
                 client = server.AcceptTcpClient();//blocking call that waits for a client connection.
-                return "Connection Sucess";//return to indicate successful connection
+                return "Connection Success";//return to indicate successful connection
             }catch(SocketException e) {
                 return "SocketException: " + e.Message;//return stacktrace of error
             }            
