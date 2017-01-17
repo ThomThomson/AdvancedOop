@@ -23,7 +23,7 @@ namespace ChatLib {
             } catch(SocketException e) {
                 return "SocketException: " + e.Message;//return stacktrace of error
             }catch(System.IO.IOException e) {
-                return "IOException: " + e.Message;//return stacktrace of error
+                return "undeliverable";
             }
         }//E N D method sendMessage
 
