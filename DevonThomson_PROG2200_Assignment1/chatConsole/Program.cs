@@ -57,7 +57,7 @@ namespace ChatConsole {
                 else if (currentMessage.Length > 0) {
                     Console.WriteLine("\t" + currentMessage);
                 }
-            }
+            }//E N D loop
         }//E N D main
     }//E N D class
 }//E N D namespace
