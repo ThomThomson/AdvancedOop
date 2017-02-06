@@ -11,7 +11,7 @@ namespace ChatLib{
         public Int32 port { get; set; }
         public TcpClient client = null;
         public event MessageReceivedEventHandler MessageHandler;
-        public bool listening = true;
+        public volatile bool listening = true;
         NetworkStream stream;
 
         //M E T H O D S  common to server & client
@@ -36,8 +36,10 @@ namespace ChatLib{
                 while (stream.CanRead && stream.DataAvailable) {
                     Int32 bytes = stream.Read(data, 0, data.Length);
                     responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                    if (MessageHandler != null) {
+                        MessageHandler(this, new MessageReceivedEventArgs(responseData));
+                    }
                 }
-                MessageHandler(responseData);
             }
         }//E N D method recieveMessage
 

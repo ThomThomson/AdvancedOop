@@ -20,7 +20,7 @@ namespace ChatGUI {
         public GameChatForm() {
             InitializeComponent();
             client = new Client(13000);
-            client.MessageHandler += new ChatLib.MessageReceivedEventHandler(MessageRecieved);
+            client.MessageHandler += new ChatLib.MessageReceivedEventHandler(Executor_MessageRecieved);
             ConnectMe();
         }
 
@@ -36,26 +36,38 @@ namespace ChatGUI {
             }
         }//E N D method ConnectMe
 
-        private void MessageRecieved(string message) {
-            if(message != null) {
-                Console.WriteLine("Waat");
-            }
+        private void Executor_MessageRecieved(object sender, MessageReceivedEventArgs e) {
             if (ConversationText.InvokeRequired) {
                 ConversationText.Invoke(new MethodInvoker(delegate (){
-                    ConversationText.Text += "\t" + message;
+                    if(e.message.Length > 0) {
+                        ConversationText.Text += "\r\nThem: " + e.message;
+                    }
                 }));
             } else {
-                ConversationText.Text += "\t" + message;
+                if (e.message.Length > 0) {
+                    ConversationText.Text += "\r\nThem: " + e.message;
+                }
             }
         }//E N D method MessageRecieved
 
-        private void TaskExecutorForm_FormClosing(object sender, FormClosingEventArgs e) {
+        private void GameChatForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (listenThread != null && listenThread.IsAlive) {
                 client.listening = false;
+                client.disconnect();
                 listenThread.Join();
             }
+        }//E N D listener C L O S I N G
 
-        }
+        private void SendButton_Click(object sender, EventArgs e) {
+            if(SendMessageText.Text.Length > 0) {
+                if (client.sendMessage(SendMessageText.Text)) {
+                    ConversationText.Text += "\r\nMe: " + SendMessageText.Text;
+                }else {
+                    ConversationText.Text += "\r\nUNDELIVERABLE MESSAGE";
+                }
+                SendMessageText.Text = "";
+            }
+        }//E N D listener S E N D
 
     }//E N D class GameChatForm
 }//E N D namespace ChatGUI
