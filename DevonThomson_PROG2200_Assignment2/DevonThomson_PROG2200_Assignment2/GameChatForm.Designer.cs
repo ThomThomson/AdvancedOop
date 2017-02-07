@@ -45,6 +45,7 @@
             this.ConversationText.Multiline = true;
             this.ConversationText.Name = "ConversationText";
             this.ConversationText.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.ConversationText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ConversationText.Size = new System.Drawing.Size(891, 264);
             this.ConversationText.TabIndex = 1;
             // 
