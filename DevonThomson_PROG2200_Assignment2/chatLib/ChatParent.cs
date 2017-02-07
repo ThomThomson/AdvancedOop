@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using LogLib;
 
 namespace ChatLib{
     public class ChatParent {
@@ -12,7 +13,9 @@ namespace ChatLib{
         public TcpClient client = null;
         public event MessageReceivedEventHandler MessageHandler;
         public volatile bool listening = true;
+        public Logger logger;
         NetworkStream stream;
+        
 
         //M E T H O D S  common to server & client
         public bool sendMessage(String message) {
@@ -20,6 +23,7 @@ namespace ChatLib{
                 stream = client.GetStream();
                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
                 stream.Write(data, 0, data.Length);
+                logger.Log(DateTime.Now.ToString(@"MM-dd-yyyy-h\:mm tt") + "- Me: " + message);
                 return true;
             } catch (SocketException e) {
                 return false;
@@ -38,6 +42,7 @@ namespace ChatLib{
                     responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
                     if (MessageHandler != null) {
                         MessageHandler(this, new MessageReceivedEventArgs(responseData));
+                        logger.Log(DateTime.Now.ToString(@"MM-dd-yyyy-h\:mm tt") + "- Them: " + responseData);
                     }
                 }
             }

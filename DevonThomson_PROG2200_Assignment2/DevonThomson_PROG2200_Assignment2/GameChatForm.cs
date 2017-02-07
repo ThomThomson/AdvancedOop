@@ -15,12 +15,13 @@ namespace ChatGUI {
         //G L O B A L variables
         Client client;
         Thread listenThread;
+        MessageReceivedEventHandler Handler;
 
         //C O N S T R U C T O R
         public GameChatForm() {
+            Handler = new ChatLib.MessageReceivedEventHandler(Executor_MessageRecieved);
             InitializeComponent();
             client = new Client(13000);
-            client.MessageHandler += new ChatLib.MessageReceivedEventHandler(Executor_MessageRecieved);
             SendButton.Enabled = false;
             SendMessageText.Enabled = false;
             DisconnectMenuItem.Enabled = false;
@@ -59,12 +60,16 @@ namespace ChatGUI {
                 SendMessageText.Text = "";
             }
         }//E N D listener S E N D
+
         private void ConnectMenuItem_Click(object sender, EventArgs e) {
             if (client.waitForServer("127.0.0.1")) {
+                client.MessageHandler += Handler;
                 listenThread = new Thread(client.recieveMessage);
                 listenThread.Name = "listener";
                 listenThread.Start();
                 ConversationText.Text += "\r\nConnected to Server";
+                client.listening = true;
+                ConnectMenuItem.Enabled = false;
                 SendButton.Enabled = true;
                 SendMessageText.Enabled = true;
                 DisconnectMenuItem.Enabled = true;
@@ -77,9 +82,10 @@ namespace ChatGUI {
         private void DisconnectMenuItem_Click(object sender, EventArgs e) {
             ConversationText.Text += "\r\nDisconnected From Server";
             client.listening = false;
-            client.sendMessage("quit");
-            client.disconnect();
+            client.MessageHandler -= Handler;
+            ConnectMenuItem.Enabled = true;
             listenThread.Join();
+            client.disconnect();
             SendButton.Enabled = false;
             SendMessageText.Enabled = false;
             DisconnectMenuItem.Enabled = false;
