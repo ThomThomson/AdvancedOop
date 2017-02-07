@@ -21,20 +21,10 @@ namespace ChatGUI {
             InitializeComponent();
             client = new Client(13000);
             client.MessageHandler += new ChatLib.MessageReceivedEventHandler(Executor_MessageRecieved);
-            ConnectMe();
+            SendButton.Enabled = false;
+            SendMessageText.Enabled = false;
+            DisconnectMenuItem.Enabled = false;
         }
-
-        public void ConnectMe() {
-            while (true) {
-                if (client.waitForServer("127.0.0.1")) {
-                    ConnectedLabel.Text = "CONNECTED";
-                    listenThread = new Thread(client.recieveMessage);
-                    listenThread.Name = "listener";
-                    listenThread.Start();
-                    break;
-                }
-            }
-        }//E N D method ConnectMe
 
         private void Executor_MessageRecieved(object sender, MessageReceivedEventArgs e) {
             if (ConversationText.InvokeRequired) {
@@ -53,6 +43,7 @@ namespace ChatGUI {
         private void GameChatForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (listenThread != null && listenThread.IsAlive) {
                 client.listening = false;
+                client.sendMessage("quit");
                 client.disconnect();
                 listenThread.Join();
             }
@@ -68,6 +59,40 @@ namespace ChatGUI {
                 SendMessageText.Text = "";
             }
         }//E N D listener S E N D
+        private void ConnectMenuItem_Click(object sender, EventArgs e) {
+            if (client.waitForServer("127.0.0.1")) {
+                listenThread = new Thread(client.recieveMessage);
+                listenThread.Name = "listener";
+                listenThread.Start();
+                ConversationText.Text += "\r\nConnected to Server";
+                SendButton.Enabled = true;
+                SendMessageText.Enabled = true;
+                DisconnectMenuItem.Enabled = true;
+            }
+            else {
+                ConversationText.Text += "\r\nCould not Connect";
+            }
+        }//E N D listener C O N N E C T
 
+        private void DisconnectMenuItem_Click(object sender, EventArgs e) {
+            ConversationText.Text += "\r\nDisconnected From Server";
+            client.listening = false;
+            client.sendMessage("quit");
+            client.disconnect();
+            listenThread.Join();
+            SendButton.Enabled = false;
+            SendMessageText.Enabled = false;
+            DisconnectMenuItem.Enabled = false;
+        }
+
+        private void ExitMenuItem_Click(object sender, EventArgs e) {
+            if (listenThread != null && listenThread.IsAlive) {
+                client.listening = false;
+                client.sendMessage("quit");
+                client.disconnect();
+                listenThread.Join();
+            }
+            Application.Exit();
+        }
     }//E N D class GameChatForm
 }//E N D namespace ChatGUI
