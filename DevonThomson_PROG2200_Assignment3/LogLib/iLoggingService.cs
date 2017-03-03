@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logging {
+namespace LogLib {
     public interface ILoggingService {
         void Log(String message);
     }

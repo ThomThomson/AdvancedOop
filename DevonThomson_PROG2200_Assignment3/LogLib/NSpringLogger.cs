@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NSpring.Logging.Loggers;
 
-namespace Logging{
+namespace LogLib{
     public class NSpringLogger : ILoggingService{
         FileLogger logger;
         /// <summary>
