@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Logging">
+      <HintPath>.\Logging.dll</HintPath>
+    </Reference>
     <Reference Include="nspring">
       <HintPath>.\nspring.dll</HintPath>
     </Reference>
