@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AlexLogger">
-      <HintPath>.\AlexLogger.dll</HintPath>
-    </Reference>
     <Reference Include="nspring">
       <HintPath>.\nspring.dll</HintPath>
     </Reference>
