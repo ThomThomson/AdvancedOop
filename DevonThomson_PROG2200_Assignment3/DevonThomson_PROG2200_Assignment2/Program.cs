@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using LogLib;
 using ChatLib;
 using Microsoft.Practices.Unity;
-using Ninject;
-using Logging;
+//using Ninject;
+//using LogLib;//MY LOGGING LIBRARY
+using Logging;//BEN'S LOGGING LIBRARY
 
 namespace ChatGUI {
     static class Program {
@@ -22,9 +22,9 @@ namespace ChatGUI {
 
             //C O N T A I N E R  I N J E C T I O N -- U N I T Y
             UnityContainer container = new UnityContainer();
-            //container.RegisterType<iLoggingService, TxtLogger>();//MY TEXTLOGGER
+            //container.RegisterType<ILoggingService, TxtLogger>();//MY TEXTLOGGER
             //container.RegisterType<ILoggingService, NSpringLogger>();//NSPRING LOGGER
-            container.RegisterType<ILoggingService, TextLogger>();//BEN'S TEXTLOGGER
+            container.RegisterType<ILoggingService, LogLib.TextLogger>();//BEN'S TEXTLOGGER
             container.RegisterInstance<string>("Log" + currentDate + ".txt");//Registering log location
             Application.Run(container.Resolve<GameChatForm>());
 

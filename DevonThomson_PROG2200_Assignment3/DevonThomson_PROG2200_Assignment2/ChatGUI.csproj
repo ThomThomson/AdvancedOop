@@ -109,6 +109,10 @@
       <Project>{5294e260-f86e-499f-9476-1bcc6ba0efdd}</Project>
       <Name>ChatLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LogLib\LogLib.csproj">
+      <Project>{3f3f28d4-ad72-4770-85df-07831df5827e}</Project>
+      <Name>LogLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

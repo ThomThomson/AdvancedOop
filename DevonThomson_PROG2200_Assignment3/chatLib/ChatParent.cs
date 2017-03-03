@@ -4,7 +4,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Logging;
+//using LogLib;//MY LOGGING LIBRARY
+using Logging;//BEN'S LOGGING LIBRARY
 
 namespace ChatLib{
     public class ChatParent {
