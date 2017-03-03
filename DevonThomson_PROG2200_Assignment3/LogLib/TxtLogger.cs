@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace LogLib{
+namespace Logging{
     public class TxtLogger : ILoggingService{
         public string FileName { get; set; }
 

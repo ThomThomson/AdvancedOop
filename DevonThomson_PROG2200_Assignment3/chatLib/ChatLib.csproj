@@ -47,9 +47,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LogLib\LogLib.csproj">
+    <ProjectReference Include="..\LogLib\Logging.csproj">
       <Project>{3f3f28d4-ad72-4770-85df-07831df5827e}</Project>
-      <Name>LogLib</Name>
+      <Name>Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
