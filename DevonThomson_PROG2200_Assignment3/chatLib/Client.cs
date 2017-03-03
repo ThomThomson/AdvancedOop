@@ -12,11 +12,10 @@ namespace ChatLib {
         /// <summary>
         /// C O N S T R U C T O R specific to the client
         /// </summary>
-        /// <param name="inPort">an int 32 representing the port to listen on</param>
-        public Client(Int32 inPort) {
-            string currentDate = DateTime.Now.ToString(@"MM-dd-yyyy-h_mmtt");
-            logger = new Logger("Log" + currentDate + ".txt");
-            port = inPort;
+        /// <param name="inLogger">a logger object passed in through the parent</param>
+        public Client(ILoggingService inLogger) {
+            logger = inLogger;
+            port = 13000;
         }//E N D constructor
 
         /// <summary>

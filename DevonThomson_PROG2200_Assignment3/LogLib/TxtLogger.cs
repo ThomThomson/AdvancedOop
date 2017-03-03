@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace LogLib{
-    public class Logger{
+    public class TxtLogger : ILoggingService{
         public string FileName { get; set; }
 
         /// <summary>
         /// Logger constructor
         /// </summary>
         /// <param name="inFileName">the full path to the file to keep logs in</param>
-        public Logger(string inFileName) {
+        public TxtLogger(string inFileName) {
             FileName = inFileName;
         }
         /// <summary>

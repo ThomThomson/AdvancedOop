@@ -13,7 +13,7 @@ namespace ChatLib{
         public TcpClient client = null;
         public event MessageReceivedEventHandler MessageHandler;
         public volatile bool listening = true;
-        public Logger logger;
+        public ILoggingService logger;
         NetworkStream stream;
 
 

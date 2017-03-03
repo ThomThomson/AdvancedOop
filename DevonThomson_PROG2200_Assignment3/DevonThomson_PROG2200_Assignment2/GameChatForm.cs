@@ -20,10 +20,10 @@ namespace ChatGUI {
         /// <summary>
         /// C O N S T R U C T O R method for the creation of a GameChatForm.
         /// </summary>
-        public GameChatForm() {
+        public GameChatForm(Client inClient) {
             Handler = new ChatLib.MessageReceivedEventHandler(Executor_MessageRecieved);
             InitializeComponent();
-            client = new Client(13000);
+            client = inClient;
             SendButton.Enabled = false;
             SendMessageText.Enabled = false;
             DisconnectMenuItem.Enabled = false;
