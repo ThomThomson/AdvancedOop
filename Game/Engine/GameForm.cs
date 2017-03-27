@@ -34,7 +34,7 @@ namespace Engine {
             if (!State.victoryConditionAchieved) {
                 State.TickAll();
                 Invalidate();
-            }else {
+            } else {
                 Application.Exit();
             }
         }
@@ -49,5 +49,23 @@ namespace Engine {
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e) { Inputs.addKey(e); }
         private void GameForm_KeyUp(object sender, KeyEventArgs e) { Inputs.removeKey(e); }
+
+        private void GameForm_MouseMove(object sender, MouseEventArgs e) { Inputs.changeMouseCoords(e); }
+
+        private void GameForm_MouseDown(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                Inputs.clickDown = true;
+            } else if (e.Button == MouseButtons.Right) {
+                Inputs.rightClickDown = true;
+            }
+        }
+
+        private void GameForm_MouseUp(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                Inputs.clickDown = false;
+            } else if (e.Button == MouseButtons.Right) {
+                Inputs.rightClickDown = false;
+            }
+        }
     }
 }

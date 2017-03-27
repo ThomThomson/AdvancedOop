@@ -25,5 +25,13 @@ namespace Engine.Managers {
                 GO.Tick();
             }
         }
+
+        public void ballVictory() {
+            victoryConditionAchieved = true;
+        }
+
+        public void keyboardVictory() {
+            victoryConditionAchieved = true;
+        }
     }
 }

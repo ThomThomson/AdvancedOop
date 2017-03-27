@@ -13,7 +13,7 @@ namespace Engine {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Managers.InputManager InputManager = new Managers.InputManager();
+            Managers.InputManager inputManager = new Managers.InputManager();
             Managers.StateManager stateManager = new Managers.StateManager();
             List<GameObjects.IGameObject> StartingObjectList = new List<GameObjects.IGameObject>();
 
@@ -21,12 +21,16 @@ namespace Engine {
             GameObjects.ObjectTypes.Landscape landscape = new GameObjects.ObjectTypes.Landscape(50, 100, 10, 5, 3, 4);
             StartingObjectList.Add(landscape);
 
-            GameObjects.ObjectTypes.KeyPlayer player = new GameObjects.ObjectTypes.KeyPlayer(InputManager, landscape, stateManager);
+            GameObjects.ObjectTypes.BallManager BallPlayer = new GameObjects.ObjectTypes.BallManager(inputManager, stateManager, landscape, 16);
+
+            GameObjects.ObjectTypes.KeyPlayer player = new GameObjects.ObjectTypes.KeyPlayer(inputManager, stateManager, landscape, BallPlayer);
+            BallPlayer.setPlayer(player);
             StartingObjectList.Add(player);
+            StartingObjectList.Add(BallPlayer);
             //End startup objects
 
             stateManager.setObjectList(StartingObjectList);
-            Application.Run(new GameForm(stateManager, InputManager));
+            Application.Run(new GameForm(stateManager, inputManager));
         }
     }
 }

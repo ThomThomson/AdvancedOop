@@ -9,8 +9,12 @@ using System.Windows.Forms;
 
 namespace Engine.GameObjects.ObjectTypes {
     class KeyPlayer : IGameObject {
-        Rectangle bounds;
-        Rectangle attackBounds;
+        private int gracePeriodTime = 100;
+        private int graceCounter = 0;
+
+        public bool invincible;
+        public Rectangle bounds;
+        public Rectangle attackBounds;
         int landscapeRow;
         int landscapeCol;
         int pixelOffsetRow = 0;
@@ -22,21 +26,27 @@ namespace Engine.GameObjects.ObjectTypes {
         bool digHeld = false;
         bool digColorSwitch = false;
 
+        BallManager enemies;
         RenderLayer renderLayer = RenderLayer.entity;
         InputManager inputManager;
         StateManager stateManager;
         Landscape landscape;
         Random rand;
+        Color invincibleColor;
+        Color playerColor;
         Brush playerBrush;
         Brush diggerBrush1;
         Brush diggerBrush2;
 
-        public KeyPlayer(Managers.InputManager inInputManager, Landscape inLandscape, StateManager stateManager) {
+        public KeyPlayer(Managers.InputManager inInputManager, StateManager stateManager, Landscape inLandscape, BallManager balls)  {
+            invincible = true;
             inputManager = inInputManager;
+            enemies = balls;
             this.stateManager = stateManager;
             landscape = inLandscape;
             rand = new Random();
-            Color playerColor = Color.FromArgb(180, 0, 0);
+            invincibleColor = Color.Aqua;
+            playerColor = Color.FromArgb(180, 0, 0);
             playerBrush = new SolidBrush(playerColor);
             Color diggerColor = Color.FromArgb(255, 138, 0);
             diggerBrush1 = new SolidBrush(diggerColor);
@@ -46,10 +56,14 @@ namespace Engine.GameObjects.ObjectTypes {
         public RenderLayer GetRenderLayer() { return renderLayer; }
 
         public void RenderSelf(Graphics inGraphics, Rectangle viewPort) {
+            if (invincible) {
+                playerBrush = new SolidBrush(invincibleColor);
+            }else {
+                playerBrush = new SolidBrush(playerColor);
+            }
             if(lastFacingDirection[0] == -1) {
                 if (digColorSwitch) {inGraphics.FillEllipse(diggerBrush1, attackBounds); digColorSwitch = false; } 
                 else { inGraphics.FillEllipse(diggerBrush2, attackBounds); digColorSwitch = true; }
-
                 inGraphics.FillRectangle(playerBrush, bounds);
             }else {
                 inGraphics.FillRectangle(playerBrush, bounds);
@@ -72,6 +86,11 @@ namespace Engine.GameObjects.ObjectTypes {
         }
 
         public void Tick() {
+            if (invincible && graceCounter < gracePeriodTime) {
+                graceCounter++;
+            }else {
+                invincible = false;
+            }
             digHeld = false;
             bounds.Width = landscape.pixelWidthPerTile / 2;
             bounds.Height = landscape.pixelHeightPerTile * 2;
@@ -135,7 +154,7 @@ namespace Engine.GameObjects.ObjectTypes {
                     attackBounds.Height = 0;
                 }
             }else {
-                stateManager.victoryConditionAchieved = true;
+                stateManager.keyboardVictory();
             }
             bounds.X = landscapeCol * landscape.pixelWidthPerTile + pixelOffsetCol;
             bounds.Y = landscapeRow * landscape.pixelHeightPerTile + pixelOffsetRow;

@@ -53,6 +53,8 @@
       <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GameObjects\IGameObject.cs" />
+    <Compile Include="GameObjects\ObjectTypes\Ball.cs" />
+    <Compile Include="GameObjects\ObjectTypes\BallManager.cs" />
     <Compile Include="GameObjects\ObjectTypes\KeyPlayer.cs" />
     <Compile Include="GameObjects\ObjectTypes\Landscape.cs" />
     <Compile Include="Managers\InputManager.cs" />
