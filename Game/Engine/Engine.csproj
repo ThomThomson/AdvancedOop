@@ -89,6 +89,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Images\charHealth-1.png" />
+    <Content Include="Images\charHealth-2.png" />
+    <Content Include="Images\charHealth-3.png" />
+    <Content Include="Images\charHealth-4.png" />
+    <Content Include="Images\Explosion.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

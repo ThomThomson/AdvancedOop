@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Engine.Managers;
 
 namespace Engine.GameObjects.ObjectTypes {
-    public enum LandscapeType { grass, dirt, rock, bedrock, goal }
+    public enum LandscapeType { grass, rock, dirt, bedrock, goal }
 
     public class LandscapeTile {
         public int brightnessOffset;
@@ -94,7 +94,7 @@ namespace Engine.GameObjects.ObjectTypes {
                         graphics.FillPolygon(brush, scaledShape.ToArray());
                     }
                     else if(tile.tileType == LandscapeType.goal){
-                        Brush brush = new SolidBrush(Color.AliceBlue);
+                        Brush brush = new SolidBrush(Color.FromArgb(0, 145, 255));
                         Rectangle goalBounds = new Rectangle(originX, originY, pixelWidthPerTile, pixelHeightPerTile);
                         graphics.FillRectangle(brush, goalBounds);
                     }
@@ -113,7 +113,7 @@ namespace Engine.GameObjects.ObjectTypes {
             for (int row = 0; row < landscapeHeight; row++) {
                 List<LandscapeTile> currentRow = new List<LandscapeTile>();
                 for (int col = 0; col < landscapeWidth; col++){
-                    if (row == goalRow && col == 0){
+                    if (row >= goalRow - 1 && row <= goalRow + 1 && col == 0){
                         currentRow.Add(new LandscapeTile(LandscapeType.goal, rand.Next(-30, 30), generateRandomShape()));
                     }
                     else if (row == 0 || col == 0 || col == landscapeWidth - 1 || row == landscapeHeight - 1) {
@@ -169,6 +169,8 @@ namespace Engine.GameObjects.ObjectTypes {
                             if (grassCount > grassSpawnThreshold) { tilesMap[row][col].tileType = LandscapeType.grass; }
                             else { tilesMap[row][col].tileType = LandscapeType.dirt; }
                         }
+                    }else if(tilesMap[row][col].tileType == LandscapeType.dirt) {
+                        tilesMap[row][col].tileType = LandscapeType.grass;
                     }
                 }
             }//end clean up

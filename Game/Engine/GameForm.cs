@@ -61,7 +61,8 @@ namespace Engine {
         private void GameForm_KeyDown(object sender, KeyEventArgs e) {
             if (Timer.Enabled){
                 Inputs.addKey(e);
-            }else if(e.KeyCode == Keys.Enter){
+            }//else
+            if (e.KeyCode == Keys.Enter){
                 State.RestartGame(Inputs, State);
                 Timer.Enabled = true;
             }

@@ -22,7 +22,6 @@ namespace Engine {
         public static void startup(int ballNum, Managers.InputManager inputManager, Managers.StateManager stateManager){
            
             List<GameObjects.IGameObject> StartingObjectList = new List<GameObjects.IGameObject>();
-
             //Create Gameobjects present at Game Start
             GameObjects.ObjectTypes.Landscape landscape = new GameObjects.ObjectTypes.Landscape(50, 100, 10, 5, 3, 4);
             StartingObjectList.Add(landscape);
