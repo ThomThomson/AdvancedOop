@@ -14,10 +14,9 @@ namespace Engine {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Managers.InputManager inputManager = new Managers.InputManager();
-            Managers.StateManager stateManager = new Managers.StateManager();
-            startup(10, inputManager, stateManager);
-            Application.Run(new GameForm(stateManager, inputManager));
-            
+            GameForm gf = new GameForm(inputManager);
+            startup(10, inputManager, gf.State);
+            Application.Run(gf);
         }
 
         public static void startup(int ballNum, Managers.InputManager inputManager, Managers.StateManager stateManager){
@@ -36,7 +35,7 @@ namespace Engine {
             StartingObjectList.Add(BallPlayer);
             //End startup objects
 
-            stateManager.setObjectList(StartingObjectList);
+            stateManager.setObjectList(StartingObjectList, ballNum);
         }
     }
 }

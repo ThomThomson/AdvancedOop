@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Engine.Managers;
 
 namespace Engine.GameObjects.ObjectTypes {
-    public enum LandscapeType { grass, dirt, rock }
+    public enum LandscapeType { grass, dirt, rock, bedrock, goal }
 
     public class LandscapeTile {
         public int brightnessOffset;
@@ -65,7 +65,7 @@ namespace Engine.GameObjects.ObjectTypes {
                         Rectangle dirtBounds = new Rectangle(originX, originY, pixelWidthPerTile, pixelHeightPerTile);
                         graphics.FillRectangle(brush, dirtBounds);
                     }
-                    if (tile.tileType == LandscapeType.rock) {
+                    else if (tile.tileType == LandscapeType.rock) {
                         Color rockColor = Color.FromArgb(100 + tile.brightnessOffset, 100 + tile.brightnessOffset, 80 + tile.brightnessOffset);
                         Brush brush = new SolidBrush(rockColor);
                         Rectangle rockBounds = new Rectangle(originX, originY, pixelWidthPerTile, pixelHeightPerTile);
@@ -83,6 +83,21 @@ namespace Engine.GameObjects.ObjectTypes {
                         graphics.FillRectangle(brush, grassbounds);
                         graphics.FillEllipse(brush, new Rectangle(originX, originY - grassbounds.Height / 2, pixelWidthPerTile, pixelHeightPerTile));
                     }
+                    else if(tile.tileType == LandscapeType.bedrock){
+                        Brush brush = new SolidBrush(Color.FromArgb(Math.Abs(tile.brightnessOffset), Math.Abs(tile.brightnessOffset), Math.Abs(tile.brightnessOffset)));
+                        Rectangle rockBounds = new Rectangle(originX, originY, pixelWidthPerTile, pixelHeightPerTile);
+                        List<PointF> scaledShape = new List<PointF>();
+                        foreach (PointF point in tile.randomShape){
+                            scaledShape.Add(new PointF(rockBounds.X + (point.X * rockBounds.Width / 10), (rockBounds.Y - (rockBounds.Height)) + (point.Y * rockBounds.Height / 10)));
+                        }
+                        graphics.FillRectangle(brush, rockBounds);
+                        graphics.FillPolygon(brush, scaledShape.ToArray());
+                    }
+                    else if(tile.tileType == LandscapeType.goal){
+                        Brush brush = new SolidBrush(Color.AliceBlue);
+                        Rectangle goalBounds = new Rectangle(originX, originY, pixelWidthPerTile, pixelHeightPerTile);
+                        graphics.FillRectangle(brush, goalBounds);
+                    }
                     originX += pixelWidthPerTile;
                 }
                 originY += pixelHeightPerTile;
@@ -93,15 +108,25 @@ namespace Engine.GameObjects.ObjectTypes {
         public void Start() {
             Array landscapeTypes = Enum.GetValues(typeof(LandscapeType));
             tilesMap = new List<List<LandscapeTile>>();
+            int goalRow = rand.Next(3, landscapeHeight - 3);
             //seed initial map
             for (int row = 0; row < landscapeHeight; row++) {
                 List<LandscapeTile> currentRow = new List<LandscapeTile>();
-                for (int col = 0; col < landscapeWidth; col++) {
-                    if(col < edgeBuffer || col > landscapeWidth - edgeBuffer - 1 || row < edgeBuffer || row > landscapeHeight - edgeBuffer - 1) {
-                        currentRow.Add(new LandscapeTile(LandscapeType.rock, rand.Next(-30, 30), generateRandomShape()));
-                    } else {
-                        LandscapeType randomLandscapeType = (LandscapeType)landscapeTypes.GetValue(rand.Next(landscapeTypes.Length));
-                        currentRow.Add(new LandscapeTile(randomLandscapeType, rand.Next(-30, 30), generateRandomShape()));
+                for (int col = 0; col < landscapeWidth; col++){
+                    if (row == goalRow && col == 0){
+                        currentRow.Add(new LandscapeTile(LandscapeType.goal, rand.Next(-30, 30), generateRandomShape()));
+                    }
+                    else if (row == 0 || col == 0 || col == landscapeWidth - 1 || row == landscapeHeight - 1) {
+                        currentRow.Add(new LandscapeTile(LandscapeType.bedrock, rand.Next(-30, 30), generateRandomShape()));
+                    }
+                    else {
+                        if (col < edgeBuffer || col > landscapeWidth - edgeBuffer - 1 || row < edgeBuffer || row > landscapeHeight - edgeBuffer - 1) {
+                            currentRow.Add(new LandscapeTile(LandscapeType.rock, rand.Next(-30, 30), generateRandomShape()));
+                        }
+                        else {
+                            LandscapeType randomLandscapeType = (LandscapeType)landscapeTypes.GetValue(rand.Next(landscapeTypes.Length - 2));
+                            currentRow.Add(new LandscapeTile(randomLandscapeType, rand.Next(-30, 30), generateRandomShape()));
+                        }
                     }
                 }
                 tilesMap.Add(currentRow);

@@ -10,13 +10,15 @@ using System.Windows.Forms;
 
 namespace Engine {
     public partial class GameForm : Form {
-        Managers.StateManager State;
+        public Managers.StateManager State;
         Managers.RenderManager Renderer;
-        Managers.InputManager Inputs;
+        public Managers.InputManager Inputs;
 
-        public GameForm(Managers.StateManager inStateManager, Managers.InputManager inInputManager) {
+        public String message = "";
+
+        public GameForm(Managers.InputManager inInputManager) {
+            State = new Managers.StateManager(this);
             InitializeComponent();
-            State = inStateManager;
             Inputs = inInputManager;
             Renderer = new Managers.RenderManager(State, this.DisplayRectangle);
         }
@@ -41,13 +43,29 @@ namespace Engine {
 
         private void onPaint(object sender, PaintEventArgs paintArgs) {
             Renderer.RenderAll(paintArgs.Graphics);
+            if (message != "")
+            {
+                Font drawFont = new Font("Impact", 50);
+                SolidBrush drawBrush = new SolidBrush(Color.White);
+                PointF drawPoint = new PointF(150.0F, 250.0F);
+
+                // Draw string to screen.
+                paintArgs.Graphics.DrawString(message, drawFont, drawBrush, drawPoint);
+            }
         }
 
         private void Resized(object sender, EventArgs e) {
             Renderer.screenSizeChanged(this.DisplayRectangle);
         }
 
-        private void GameForm_KeyDown(object sender, KeyEventArgs e) { Inputs.addKey(e); }
+        private void GameForm_KeyDown(object sender, KeyEventArgs e) {
+            if (Timer.Enabled){
+                Inputs.addKey(e);
+            }else if(e.KeyCode == Keys.Enter){
+                State.RestartGame(Inputs, State);
+                Timer.Enabled = true;
+            }
+        }
         private void GameForm_KeyUp(object sender, KeyEventArgs e) { Inputs.removeKey(e); }
 
         private void GameForm_MouseMove(object sender, MouseEventArgs e) { Inputs.changeMouseCoords(e); }
@@ -60,10 +78,11 @@ namespace Engine {
             }
         }
 
-        private void GameForm_MouseUp(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
+        private void GameForm_MouseUp(object sender, MouseEventArgs e){
+            if (e.Button == MouseButtons.Left){
                 Inputs.clickDown = false;
-            } else if (e.Button == MouseButtons.Right) {
+            }
+            else if (e.Button == MouseButtons.Right){
                 Inputs.rightClickDown = false;
             }
         }

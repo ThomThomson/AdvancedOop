@@ -50,7 +50,7 @@ namespace Engine.GameObjects.ObjectTypes {
             this.stateManager = stateManager;
             landscape = inLandscape;
             rand = new Random();
-            invincibleColor = Color.Aqua;
+            invincibleColor = Color.Red;
 
             playerColor = Color.FromArgb(255 - ((255 / startingHealth) * health), 0, (255 / startingHealth) * health);
 
@@ -87,7 +87,7 @@ namespace Engine.GameObjects.ObjectTypes {
             while (true) {
                 int row = rand.Next(0, landscape.landscapeHeight);
                 int col = rand.Next(0, landscape.landscapeWidth);
-                if (landscape.tilesMap[row][col].tileType != LandscapeType.rock) {
+                if (landscape.tilesMap[row][col].tileType == LandscapeType.grass || landscape.tilesMap[row][col].tileType == LandscapeType.dirt) {
                     landscapeCol = col; landscapeRow = row;
                     bounds = new Rectangle();
                     break;
@@ -106,37 +106,53 @@ namespace Engine.GameObjects.ObjectTypes {
             bounds.Width = landscape.pixelWidthPerTile / 2;
             bounds.Height = landscape.pixelHeightPerTile * 2;
             int pixelSpeed = landscape.pixelWidthPerTile / 5;
-            if(landscapeRow > 1 && landscapeRow < landscape.landscapeHeight - 1 && 
-               landscapeCol > 1 && landscapeCol < landscape.landscapeWidth - 1) {
+            if(landscapeRow > 0 && landscapeRow < landscape.landscapeHeight && 
+               landscapeCol > 0 && landscapeCol < landscape.landscapeWidth) {
                 foreach (KeyEventArgs key in inputManager.keysHeld) {
                     if (key.KeyCode == Keys.W) {
                         lastFacingDirection[0] = -1; lastFacingDirection[1] = 0;
-                        if (pixelOffsetRow > -bounds.Height) { pixelOffsetRow -= pixelSpeed; } 
-                        else if (landscape.tilesMap[landscapeRow - 1][landscapeCol].tileType != LandscapeType.rock) {
+                        if (pixelOffsetRow > -bounds.Height) { pixelOffsetRow -= pixelSpeed; }
+                        else if (landscape.tilesMap[landscapeRow - 1][landscapeCol].tileType == LandscapeType.goal){
+                            stateManager.keyboardVictory(inputManager, stateManager);
+                        }
+                        else if (landscape.tilesMap[landscapeRow - 1][landscapeCol].tileType != LandscapeType.rock &&
+                                 landscape.tilesMap[landscapeRow - 1][landscapeCol].tileType != LandscapeType.bedrock) {
                             landscapeRow--;
                             pixelOffsetRow = landscape.pixelHeightPerTile - bounds.Height - pixelSpeed;
                         }
                     }
                     if (key.KeyCode == Keys.A) {
                         lastFacingDirection[0] = 0; lastFacingDirection[1] = -1;
-                        if (pixelOffsetCol > 0) { pixelOffsetCol -= pixelSpeed; } 
-                        else if (landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType != LandscapeType.rock) {
+                        if (pixelOffsetCol > 0) { pixelOffsetCol -= pixelSpeed; }
+                        else if(landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType == LandscapeType.goal){
+                            stateManager.keyboardVictory(inputManager, stateManager);
+                        }
+                        else if (landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType != LandscapeType.rock &&
+                                 landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType != LandscapeType.bedrock) {
                             landscapeCol--;
                             pixelOffsetCol = landscape.pixelWidthPerTile - pixelSpeed;
                         }
                     }
                     if (key.KeyCode == Keys.S) {
                         lastFacingDirection[0] = 1; lastFacingDirection[1] = 0;
-                        if (pixelOffsetRow < landscape.pixelHeightPerTile - bounds.Height) { pixelOffsetRow += pixelSpeed; } 
-                        else if (landscape.tilesMap[landscapeRow + 1][landscapeCol].tileType != LandscapeType.rock) {
+                        if (pixelOffsetRow < landscape.pixelHeightPerTile - bounds.Height) { pixelOffsetRow += pixelSpeed; }
+                        else if (landscape.tilesMap[landscapeRow + 1][landscapeCol].tileType == LandscapeType.goal){
+                            stateManager.keyboardVictory(inputManager, stateManager);
+                        }
+                        else if (landscape.tilesMap[landscapeRow + 1][landscapeCol].tileType != LandscapeType.rock &&
+                                 landscape.tilesMap[landscapeRow + 1][landscapeCol].tileType != LandscapeType.bedrock) {
                             landscapeRow++;
                             pixelOffsetRow = -bounds.Height + pixelSpeed;
                         }
                     }
                     if (key.KeyCode == Keys.D) {
                         lastFacingDirection[0] = 0; lastFacingDirection[1] = 1;
-                        if (pixelOffsetCol < landscape.pixelWidthPerTile - bounds.Width) { pixelOffsetCol += pixelSpeed; } 
-                        else if (landscape.tilesMap[landscapeRow][landscapeCol + 1].tileType != LandscapeType.rock) {
+                        if (pixelOffsetCol < landscape.pixelWidthPerTile - bounds.Width) { pixelOffsetCol += pixelSpeed; }
+                        else if (landscape.tilesMap[landscapeRow][landscapeCol + 1].tileType == LandscapeType.goal){
+                            stateManager.keyboardVictory(inputManager, stateManager);
+                        }
+                        else if (landscape.tilesMap[landscapeRow][landscapeCol + 1].tileType != LandscapeType.rock &&
+                                 landscape.tilesMap[landscapeRow][landscapeCol + 1].tileType != LandscapeType.bedrock) {
                             landscapeCol++;
                             pixelOffsetCol = -bounds.Width + pixelSpeed;
                         }
@@ -150,9 +166,12 @@ namespace Engine.GameObjects.ObjectTypes {
                         if (lastFacingDirection[1] > 0) { attackBounds.X = bounds.X + bounds.Width;  }
                         else if(lastFacingDirection[1] < 0) { attackBounds.X = bounds.X - attackBounds.Width; }
                         if (timeDigging >= digCooldown) {
-                            landscape.tilesMap[landscapeRow + lastFacingDirection[0]]
-                                              [landscapeCol + lastFacingDirection[1]].tileType = LandscapeType.dirt; 
-                            timeDigging = 0;
+                            if(landscape.tilesMap[landscapeRow + lastFacingDirection[0]]
+                                [landscapeCol + lastFacingDirection[1]].tileType != LandscapeType.bedrock){
+                                landscape.tilesMap[landscapeRow + lastFacingDirection[0]]
+                                              [landscapeCol + lastFacingDirection[1]].tileType = LandscapeType.dirt;
+                                timeDigging = 0;
+                            }
                         }else {
                             digHeld = true;
                             timeDigging += 0.1f;
@@ -164,8 +183,6 @@ namespace Engine.GameObjects.ObjectTypes {
                     attackBounds.Width = 0;
                     attackBounds.Height = 0;
                 }
-            }else {
-                stateManager.keyboardVictory(inputManager, stateManager);
             }
             bounds.X = landscapeCol * landscape.pixelWidthPerTile + pixelOffsetCol;
             bounds.Y = landscapeRow * landscape.pixelHeightPerTile + pixelOffsetRow;
