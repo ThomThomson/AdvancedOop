@@ -11,6 +11,9 @@ namespace Engine.GameObjects.ObjectTypes {
         public int exploding = 0;
         public int solidifying = 0;
 
+        public int bounceCooldown = 30;
+        public int bounceTime = 0;
+
         public int landscapeRow;
         public int landscapeCol;
         public float[] headingDirection = new float[2];

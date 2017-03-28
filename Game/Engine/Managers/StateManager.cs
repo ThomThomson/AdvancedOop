@@ -34,6 +34,8 @@ namespace Engine.Managers {
         public void ballVictory(Managers.InputManager inInputManager, StateManager stateManager) {
             gameTimer.Enabled = false;
             Program.startup(30, inInputManager, stateManager);
+            StartAll();
+            gameTimer.Enabled = true;
             //victoryConditionAchieved = true;
         }
 

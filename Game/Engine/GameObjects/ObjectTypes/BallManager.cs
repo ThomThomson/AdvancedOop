@@ -92,6 +92,7 @@ namespace Engine.GameObjects.ObjectTypes {
 
         public void Tick() {
             foreach (Ball ball in balls) {
+                ball.bounceTime++;
                 ball.bounds.Width = landscape.pixelWidthPerTile;
                 ball.bounds.Height = landscape.pixelWidthPerTile;
 
@@ -127,10 +128,17 @@ namespace Engine.GameObjects.ObjectTypes {
                     ball.bounds.X = (ball.landscapeCol * landscape.pixelWidthPerTile);
                     ball.bounds.Y = (ball.landscapeRow * landscape.pixelHeightPerTile);
                 }else {
-                    if (ball.bounds.X <= 0 || ball.bounds.Right >= landscape.landscapeWidth * landscape.pixelWidthPerTile) {
-                        ball.headingDirection[0] *= -1;
-                    } if (ball.bounds.Y <= 0 || ball.bounds.Bottom >= landscape.landscapeHeight * landscape.pixelHeightPerTile) {
-                        ball.headingDirection[1] *= -1;
+                    if(ball.bounceTime > ball.bounceCooldown){
+                        if (ball.bounds.X <= 0 || ball.bounds.Right >= landscape.landscapeWidth * landscape.pixelWidthPerTile)
+                        {
+                            ball.headingDirection[0] *= -1;
+                            ball.bounceTime = 0;
+                        }
+                        if (ball.bounds.Y <= 0 || ball.bounds.Bottom >= landscape.landscapeHeight * landscape.pixelHeightPerTile)
+                        {
+                            ball.headingDirection[1] *= -1;
+                            ball.bounceTime = 0;
+                        }
                     }
                     ball.bounds.X = (int)(ball.bounds.X + ball.headingDirection[0]);
                     ball.bounds.Y = (int)(ball.bounds.Y + ball.headingDirection[1]);
@@ -138,9 +146,10 @@ namespace Engine.GameObjects.ObjectTypes {
                     //ball.bounds.X = (int)(ball.bounds.X + (inputManager.mouseCoords[0] - ball.bounds.X) * 0.008);
                     //ball.bounds.Y = (int)(ball.bounds.Y + (inputManager.mouseCoords[1] - ball.bounds.Y) * 0.008);
                 }
-                ball.landscapeCol = (int)((ball.bounds.X + (ball.bounds.Width / 2)) / landscape.pixelWidthPerTile);
-                ball.landscapeRow = (int)((ball.bounds.Y + (ball.bounds.Height / 2)) / landscape.pixelHeightPerTile);
-
+                if(landscape.pixelWidthPerTile != 0 && landscape.pixelHeightPerTile != 0){
+                    ball.landscapeCol = (int)((ball.bounds.X + (ball.bounds.Width / 2)) / landscape.pixelWidthPerTile);
+                    ball.landscapeRow = (int)((ball.bounds.Y + (ball.bounds.Height / 2)) / landscape.pixelHeightPerTile);
+                }
                 if((inputManager.mouseCoords[0] > ball.bounds.X && inputManager.mouseCoords[0] < ball.bounds.X + ball.bounds.Width) &&
                    (inputManager.mouseCoords[1] > ball.bounds.Y && inputManager.mouseCoords[1] < ball.bounds.Y + ball.bounds.Height)){
                     if (inputManager.clickDown && ball.exploding == 0 && ball.solidifying == 0) {
