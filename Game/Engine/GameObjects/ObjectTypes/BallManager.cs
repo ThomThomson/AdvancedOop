@@ -56,10 +56,16 @@ namespace Engine.GameObjects.ObjectTypes {
                     inGraphics.FillEllipse(currentBallBrush, balls[i].bounds);
                 }
                 if (!player.invincible && balls[i].bounds.IntersectsWith(player.bounds)) {
-                    stateManager.ballVictory();
+                    player.invincible = true;
+                    player.health -= 1;
+                    player.playerColor = Color.FromArgb(255 - ((255 / player.startingHealth) * player.health),
+                        0, (255 / player.startingHealth) * player.health);
+                    if(player.health <= 0){
+                        stateManager.ballVictory(inputManager, stateManager);
+                    }
                 }else if (balls[i].bounds.IntersectsWith(player.attackBounds)) {
-                    balls[i].headingDirection[0] *= -1;
-                    balls[i].headingDirection[1] *= -1;
+                    //balls[i].headingDirection[0] *= -1;
+                    //balls[i].headingDirection[1] *= -1;
                 }
                 if (deletedThisBall) { balls.Remove(balls[i]); } 
                 else { i++; }
@@ -129,8 +135,8 @@ namespace Engine.GameObjects.ObjectTypes {
                     ball.bounds.X = (int)(ball.bounds.X + ball.headingDirection[0]);
                     ball.bounds.Y = (int)(ball.bounds.Y + ball.headingDirection[1]);
                     //mouse influence
-                    ball.bounds.X = (int)(ball.bounds.X + (inputManager.mouseCoords[0] - ball.bounds.X) * 0.008);
-                    ball.bounds.Y = (int)(ball.bounds.Y + (inputManager.mouseCoords[1] - ball.bounds.Y) * 0.008);
+                    //ball.bounds.X = (int)(ball.bounds.X + (inputManager.mouseCoords[0] - ball.bounds.X) * 0.008);
+                    //ball.bounds.Y = (int)(ball.bounds.Y + (inputManager.mouseCoords[1] - ball.bounds.Y) * 0.008);
                 }
                 ball.landscapeCol = (int)((ball.bounds.X + (ball.bounds.Width / 2)) / landscape.pixelWidthPerTile);
                 ball.landscapeRow = (int)((ball.bounds.Y + (ball.bounds.Height / 2)) / landscape.pixelHeightPerTile);

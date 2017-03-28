@@ -21,13 +21,13 @@ namespace Engine {
             Renderer = new Managers.RenderManager(State, this.DisplayRectangle);
         }
 
-        /* U s e  O n L o a d  to define all  O b j e c t s  existing at the start of the game*/
         private void OnLoad(object sender, EventArgs e) {
             this.WindowState = FormWindowState.Maximized;
             Renderer.screenSizeChanged(this.DisplayRectangle);
             /*Gameplay Starts here*/
             State.StartAll();
             Timer.Start();
+            State.setTimer(Timer);
         }
 
         private void OnTick(object sender, EventArgs e) {
