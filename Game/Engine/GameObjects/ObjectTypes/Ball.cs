@@ -78,7 +78,7 @@ namespace Engine.GameObjects.ObjectTypes {
                 (landscapeRow > 2 && landscapeRow < landscape.landscapeHeight - 2)) {
                     for (int row = -2; row < 3; row++) {
                         for (int col = -1; col < 2; col++) {
-                            landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.rock;
+                            landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.bedrock;
                         }
                     }
                 }
