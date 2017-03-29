@@ -63,8 +63,8 @@ namespace Engine.Managers {
         public void ballVictory() {
             gameTimer.Enabled = false;
             level = 1;
-            parentForm.message = "You hecked up. Press enter to restart game";
-            parentForm.Invalidate();
+            parentForm.subMessage = "";
+            parentForm.message = parentForm.failureMessage;
             ballsNum = 10;
         }
         /// <summary>
@@ -73,6 +73,7 @@ namespace Engine.Managers {
         public void keyboardVictory() {
             gameTimer.Enabled = false;
             level++;
+            parentForm.subMessage = "";
             parentForm.message = "VICTORY. Press enter to load level " + level;
             ballsNum += 5;
         }
@@ -86,6 +87,15 @@ namespace Engine.Managers {
             parentForm.message = "";
             StartAll();
             gameTimer.Enabled = true;
+        }
+
+        /// <summary>
+        /// shows controls for beginning new round
+        /// </summary>
+        /// <param name="inInputManager">The InputManager from the GameObject which called the victory</param>
+        public void showControls() {
+            parentForm.message = parentForm.startupMessage;
+            parentForm.subMessage = parentForm.startupSubMessage;
         }
     }
 }

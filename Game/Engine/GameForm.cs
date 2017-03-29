@@ -14,9 +14,23 @@ namespace Engine {
         Managers.RenderManager Renderer;
         public Managers.InputManager Inputs;
 
-        public String message = "";
+        public string message = "";
+        public string failureMessage = "You hecked up. Press enter to restart game";
+        public string startupMessage = "P A T H B U I L D E R";
+        public string startupSubMessage = "press enter to start \nPlayer 1 uses the Keyboard. Get to the blue square\n" +
+                                          "\tControls:\n" +
+                                          "\tWASD: movement\n" +
+                                          "\tSPACE: hold for one second to dig stone\n\n" +
+                                          "Player 2 uses the Mouse. Kill player 1\n" +
+                                          "\tControls:\n" +
+                                          "\tLeft click on a ball for an explosion\n" +
+                                          "\tRight click on a ball to spawn bedrock\n";
+
+        public string subMessage = "";
 
         public GameForm(Managers.InputManager inInputManager) {
+            message = startupMessage;
+            subMessage = startupSubMessage;
             State = new Managers.StateManager(this);
             InitializeComponent();
             Inputs = inInputManager;
@@ -28,7 +42,7 @@ namespace Engine {
             Renderer.screenSizeChanged(this.DisplayRectangle);
             /*Gameplay Starts here*/
             State.StartAll();
-            Timer.Start();
+            //Timer.Start();
             State.setTimer(Timer);
         }
 
@@ -43,14 +57,19 @@ namespace Engine {
 
         private void onPaint(object sender, PaintEventArgs paintArgs) {
             Renderer.RenderAll(paintArgs.Graphics);
-            if (message != "")
-            {
+            if (message != ""){
+                paintArgs.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, 0, 0, 0)), this.DisplayRectangle);
                 Font drawFont = new Font("Impact", 50);
                 SolidBrush drawBrush = new SolidBrush(Color.White);
-                PointF drawPoint = new PointF(150.0F, 250.0F);
+                PointF drawPoint = new PointF(50.0F, 30.0F);
 
                 // Draw string to screen.
                 paintArgs.Graphics.DrawString(message, drawFont, drawBrush, drawPoint);
+                if(subMessage != "") {
+                    PointF subPoint = new PointF(50.0F, 150.0F);
+                    Font subFont = new Font("Impact", 20);
+                    paintArgs.Graphics.DrawString(subMessage, subFont, drawBrush, subPoint);
+                }
             }
         }
 
@@ -60,12 +79,20 @@ namespace Engine {
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Escape) {
-                State.RestartGame(Inputs);
-            }else if (Timer.Enabled){
+                State.showControls();
+                Timer.Enabled = false;
+                Invalidate();
+                //State.RestartGame(Inputs);
+            } else if (Timer.Enabled){
                 Inputs.addKey(e);
             }else if (e.KeyCode == Keys.Enter){
-                State.RestartGame(Inputs);
-                Timer.Enabled = true;
+                if(message == failureMessage) { 
+                    State.showControls();
+                    Invalidate();
+                }else {
+                    State.RestartGame(Inputs);
+                    Timer.Enabled = true;
+                }
             }
         }
         private void GameForm_KeyUp(object sender, KeyEventArgs e) {
