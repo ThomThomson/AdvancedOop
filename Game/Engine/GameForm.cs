@@ -59,17 +59,22 @@ namespace Engine {
         }
 
         private void GameForm_KeyDown(object sender, KeyEventArgs e) {
-            if (Timer.Enabled){
+            if (e.KeyCode == Keys.Escape) {
+                State.RestartGame(Inputs);
+            }else if (Timer.Enabled){
                 Inputs.addKey(e);
-            }//else
-            if (e.KeyCode == Keys.Enter){
-                State.RestartGame(Inputs, State);
+            }else if (e.KeyCode == Keys.Enter){
+                State.RestartGame(Inputs);
                 Timer.Enabled = true;
             }
         }
-        private void GameForm_KeyUp(object sender, KeyEventArgs e) { Inputs.removeKey(e); }
+        private void GameForm_KeyUp(object sender, KeyEventArgs e) {
+            Inputs.removeKey(e);
+        }
 
-        private void GameForm_MouseMove(object sender, MouseEventArgs e) { Inputs.changeMouseCoords(e); }
+        private void GameForm_MouseMove(object sender, MouseEventArgs e) {
+            Inputs.changeMouseCoords(e);
+        }
 
         private void GameForm_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {

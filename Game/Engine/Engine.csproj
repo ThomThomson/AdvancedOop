@@ -57,6 +57,7 @@
     <Compile Include="GameObjects\ObjectTypes\BallManager.cs" />
     <Compile Include="GameObjects\ObjectTypes\KeyPlayer.cs" />
     <Compile Include="GameObjects\ObjectTypes\Landscape.cs" />
+    <Compile Include="GameObjects\ObjectTypes\LandscapeTile.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Managers\StateManager.cs" />

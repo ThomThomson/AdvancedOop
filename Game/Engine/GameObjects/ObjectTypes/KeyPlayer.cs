@@ -9,62 +9,51 @@ using System.Windows.Forms;
 
 namespace Engine.GameObjects.ObjectTypes {
     class KeyPlayer : IGameObject {
-        private int gracePeriodTime = 15;
-        private int graceCounter = 0;
-
-        public int health;
-        public int startingHealth;
-
-        public bool invincible;
-        public Rectangle bounds;
-        public Rectangle imageBounds;
-        public Rectangle attackBounds;
-        int landscapeRow;
-        int landscapeCol;
-        int pixelOffsetRow = 0;
-        int pixelOffsetCol = 0;
-        int[] lastFacingDirection = new int[2];
-
-        float timeDigging = 0;
-        float digCooldown = 3f;
-        bool digHeld = false;
-        RenderLayer renderLayer = RenderLayer.entity;
+        #region P A R A M S  &  S T A R T U P
+        //Game References
         InputManager inputManager;
         StateManager stateManager;
         Landscape landscape;
-        Random rand;
+        //rendering
+        public Rectangle bounds;
+        public Rectangle imageBounds;
+        public Rectangle attackBounds;
+        public Image image = Image.FromFile("../../images/charHealth-4.png");
+        private Brush diggerBrush = new SolidBrush(Color.White);
+        private int landscapeRow;
+        private int landscapeCol;
+        private int[] lastFacingDirection = new int[2];
+        //internal objects
+        private Random rand = new Random();
+        //settings
+        public int health;
+        public int startingHealth;
+        public bool invincible;
+        private int invincibilityTime = 15;
+        private int timeInvincible = 0;
+        private float timeDigging = 0;
+        private float digCooldown = 3f;
+        private bool digHeld = false;
 
-        Brush diggerBrush;
-        public Image image;
-
-        public KeyPlayer(Managers.InputManager inInputManager, StateManager stateManager, Landscape inLandscape, int inHealth)  {
-            //invincible = true;
+        /// <summary>
+        /// The KeyPlayer's constructor handles injection of necessary game elements.
+        /// </summary>
+        /// <param name="inInputManager">The input manager reference to determine the mouse position etc</param>
+        /// <param name="inStateManager">The state manager for declaring victory conditions</param>
+        /// <param name="inLandscape">The landscape reference </param>
+        /// <param name="inHealth">The starting health for the KeyPlayer</param>
+        public KeyPlayer(Managers.InputManager inInputManager, StateManager inStateManager, Landscape inLandscape, int inHealth)  {
             health = inHealth;
             startingHealth = inHealth;
             inputManager = inInputManager;
-            this.stateManager = stateManager;
+            stateManager = inStateManager;
             landscape = inLandscape;
-            rand = new Random();
-            image = Image.FromFile("../../images/charHealth-4.png");
-
-            Color diggerColor = Color.FromArgb(255, 250, 119);
-            diggerBrush = new SolidBrush(diggerColor);
         }
 
-        public RenderLayer GetRenderLayer() { return renderLayer; }
-
-        public void RenderSelf(Graphics inGraphics, Rectangle viewPort) {
-            if (lastFacingDirection[0] == -1) {
-                inGraphics.FillEllipse(diggerBrush, attackBounds);
-                inGraphics.DrawImage(image, imageBounds);
-            } else {
-                inGraphics.DrawImage(image, imageBounds);
-                inGraphics.FillEllipse(diggerBrush, attackBounds);
-            }
-        }
-
+        /// <summary>
+        /// The KeyPlayer's start method spawns the player on a grass tile in the landscape.
+        /// </summary>
         public void Start() {
-            //randomly place 
             while (true) {
                 int row = rand.Next(0, landscape.landscapeHeight);
                 int col = rand.Next(0, landscape.landscapeWidth);
@@ -75,15 +64,23 @@ namespace Engine.GameObjects.ObjectTypes {
                 }
             }
         }
+        #endregion
 
+        #region T I C K
+        /// <summary>
+        /// The KeyPlayer's Tick method controls invincibility, collision with landscape, movement and digging.
+        /// </summary>
         public void Tick() {
-            if (invincible && graceCounter < gracePeriodTime) {
-                graceCounter++;
-            }else {
+            //i n v i n c i b i l i t y  handling
+            if (invincible && timeInvincible < invincibilityTime) {
+                timeInvincible++;
+            } else {
                 invincible = false;
-                graceCounter = 0;
+                timeInvincible = 0;
             }
-            digHeld = false;
+            
+            /*s i z i n g,  originally  l o c a t i n g,  and determining 
+             * the  s p e e d  of the character based on the size of the landscape */
             int pixelSpeed = 0;
             if (landscape.pixelHeightPerTile != 0) {
                 bounds.Width = landscape.pixelWidthPerTile / 2;
@@ -105,14 +102,16 @@ namespace Engine.GameObjects.ObjectTypes {
                 }
             }
 
-            if (landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType == LandscapeType.goal) {
-                stateManager.keyboardVictory(inputManager, stateManager);
-            } else {
+            //M o v e m e n t code
+            digHeld = false;
+            if (landscape.tilesMap[landscapeRow][landscapeCol - 1].tileType == LandscapeType.goal) {//Victory condition
+                stateManager.keyboardVictory();
+            } else {//loop through all the keys currently held to determine what actions to take.
                 foreach (KeyEventArgs key in inputManager.keysHeld) {
                     if (key.KeyCode == Keys.W) {
                         lastFacingDirection[0] = -1; lastFacingDirection[1] = 0;
                         LandscapeType forwardTile = landscape.tilesMap[landscapeRow - 1][landscapeCol].tileType;
-                        if (forwardTile == LandscapeType.grass || forwardTile == LandscapeType.dirt || 
+                        if (forwardTile == LandscapeType.grass || forwardTile == LandscapeType.dirt ||
                                 bounds.Y + bounds.Height > (landscapeRow * landscape.pixelHeightPerTile) + pixelSpeed) {
                             bounds.Y -= pixelSpeed;
                         }
@@ -167,9 +166,28 @@ namespace Engine.GameObjects.ObjectTypes {
                     attackBounds.Height = 0;
                 }
             }
-                
-            //bounds.X = landscapeCol * landscape.pixelWidthPerTile + pixelOffsetCol;
-            //bounds.Y = landscapeRow * landscape.pixelHeightPerTile + pixelOffsetRow;
         }
-    }
+        #endregion
+
+        #region R E N D E R I N G
+        /// <summary>
+        /// The KeyPlayer's render method is in charge of drawing the character and its attack to the screen in the right order.
+        /// </summary>
+        /// <param name="inGraphics">The graphics given to the GameObject by the form</param>
+        /// <param name="viewPort">The rectangle representing the current screen size</param>
+        public void RenderSelf(Graphics inGraphics, Rectangle viewPort) {
+            if (lastFacingDirection[0] == -1) {
+                inGraphics.FillEllipse(diggerBrush, attackBounds);
+                inGraphics.DrawImage(image, imageBounds);
+            } else {
+                inGraphics.DrawImage(image, imageBounds);
+                inGraphics.FillEllipse(diggerBrush, attackBounds);
+            }
+        }
+
+        public RenderLayer GetRenderLayer() {
+            return RenderLayer.entity;
+        }
+        #endregion
+    }//E N D class
 }

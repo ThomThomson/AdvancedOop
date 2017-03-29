@@ -9,9 +9,7 @@ namespace Engine.GameObjects {
     public interface IGameObject {
         void Start();
         void Tick();
-
         void RenderSelf(Graphics inGraphics, Rectangle viewPort);
-
         Managers.RenderLayer GetRenderLayer();
     }
 }

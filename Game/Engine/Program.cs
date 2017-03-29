@@ -20,16 +20,12 @@ namespace Engine {
         }
 
         public static void startup(int ballNum, Managers.InputManager inputManager, Managers.StateManager stateManager){
-           
             List<GameObjects.IGameObject> StartingObjectList = new List<GameObjects.IGameObject>();
             //Create Gameobjects present at Game Start
             GameObjects.ObjectTypes.Landscape landscape = new GameObjects.ObjectTypes.Landscape(50, 100, 10, 5, 3, 4);
             StartingObjectList.Add(landscape);
-
-            GameObjects.ObjectTypes.BallManager BallPlayer = new GameObjects.ObjectTypes.BallManager(inputManager, stateManager, landscape, ballNum);
-
             GameObjects.ObjectTypes.KeyPlayer player = new GameObjects.ObjectTypes.KeyPlayer(inputManager, stateManager, landscape, 4);
-            BallPlayer.setPlayer(player);
+            GameObjects.ObjectTypes.BallManager BallPlayer = new GameObjects.ObjectTypes.BallManager(inputManager, stateManager, landscape, ballNum, player);
             StartingObjectList.Add(player);
             StartingObjectList.Add(BallPlayer);
             //End startup objects

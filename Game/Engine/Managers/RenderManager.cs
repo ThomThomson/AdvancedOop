@@ -18,7 +18,10 @@ namespace Engine.Managers {
             gameState = inStateManager;
             Screensize = inScreensize;
         }
-
+        /// <summary>
+        /// calls the render method for each gameobject currently active in the game's state
+        /// </summary>
+        /// <param name="screen">Graphics object passed in from the Game Form</param>
         public void RenderAll(Graphics screen) {
             if (gameState != null) {
                 foreach(RenderLayer currentLayer in Enum.GetValues(typeof(RenderLayer))) {
@@ -31,6 +34,10 @@ namespace Engine.Managers {
             }
         }//E N D  M E T H O D  RenderAll
 
+        /// <summary>
+        /// handles changing of the screensize
+        /// </summary>
+        /// <param name="newScreensize">The Rectangle representing the screen at its current size</param>
         public void screenSizeChanged(Rectangle newScreensize) {
             Screensize = newScreensize;
         }

@@ -18,28 +18,32 @@ namespace Engine.Managers {
             mouseCoords = new int[2];
         }
 
-        public void changeMouseCoords(MouseEventArgs e) {
-            mouseCoords[0] = e.X;
-            mouseCoords[1] = e.Y;
+        /// <summary>
+        /// changes the stored mouse position
+        /// </summary>
+        /// <param name="inArgs">The mouseEventArgs containing the position of the mouse</param>
+        public void changeMouseCoords(MouseEventArgs inArgs) {
+            mouseCoords[0] = inArgs.X;
+            mouseCoords[1] = inArgs.Y;
         }
-
-        public void addKey(KeyEventArgs e) {
-            if (keysHeld.Find(r => r.KeyCode == e.KeyCode) == null) {
-                keysHeld.Add(e);
+    
+        /// <summary>
+        /// manages adding keys to the list of currently held keys
+        /// </summary>
+        /// <param name="inArgs">The arguments containing which keycode was pressed</param>
+        public void addKey(KeyEventArgs inArgs) {
+            if (keysHeld.Find(r => r.KeyCode == inArgs.KeyCode) == null) {
+                keysHeld.Add(inArgs);
             }
         }
 
-        public void removeKey(KeyEventArgs e) {
-            KeyEventArgs keyToRemove = keysHeld.SingleOrDefault(r => r.KeyCode == e.KeyCode);
+        /// <summary>
+        /// manages removing keys from the list of currently held keys
+        /// </summary>
+        /// <param name="inArgs">The arguments containing which keycode was pressed</param>
+        public void removeKey(KeyEventArgs inArgs) {
+            KeyEventArgs keyToRemove = keysHeld.SingleOrDefault(r => r.KeyCode == inArgs.KeyCode);
             if (keyToRemove != null) { keysHeld.Remove(keyToRemove); }
-        }
-
-        public void printKeys() {
-            String keysHeldStr = "";
-            foreach(KeyEventArgs key in keysHeld) {
-                keysHeldStr += key.KeyCode.ToString();
-            }
-            Console.WriteLine("KEYS: " + keysHeldStr);
         }
     }
 }

@@ -8,75 +8,44 @@ using Engine.Managers;
 
 namespace Engine.GameObjects.ObjectTypes {
     class BallManager : IGameObject {
-        int ballCount;
-        public int originalBallCount;
-        Rectangle explosion;
-        int explodeThreshold = 3;
-        int solidifyThreshold = 3;
+        #region P A R A M S  &  S T A R T U P
+        //Game References
+        private InputManager inputManager;
+        private StateManager stateManager;
+        private Landscape landscape;
+        private KeyPlayer player;
+        //rendering
+        private Rectangle explosion;
+        private Image explosionImage = Image.FromFile("../../images/Explosion.png");
+        //internal objects
+        private Random rand = new Random();
+        private List<Ball> balls;
+        //settings
+        private int ballCount;
+        private int explodeThreshold = 3;
+        private int solidifyThreshold = 3;
 
-        InputManager inputManager;
-        StateManager stateManager;
-        Landscape landscape;
-        KeyPlayer player;
-        private Random rand;
-        List<Ball> balls;
-        Image explosionImage;
-
-        public BallManager(InputManager inInputManager, StateManager inStateManager, Landscape inLandscape, int inStartingBalls) {
+        /// <summary>
+        /// The Ballmanager's constructor is used to inject required references.
+        /// </summary>
+        /// <param name="inInputManager">The input manager reference to determine the mouse position etc</param>
+        /// <param name="inStateManager">The state manager for declaring victory conditions</param>
+        /// <param name="inLandscape">The landscape reference </param>
+        /// <param name="inStartingBalls">The number of balls to start with this game</param>
+        public BallManager(InputManager inInputManager, StateManager inStateManager, Landscape inLandscape, int inStartingBalls, KeyPlayer inPlayer) {
             ballCount = inStartingBalls;
+            player = inPlayer;
             stateManager = inStateManager;
             inputManager = inInputManager;
             landscape = inLandscape;
-            explosionImage = Image.FromFile("../../images/Explosion.png");
-            rand = new Random();
         }
-        public void setPlayer(KeyPlayer inPlayer) { player = inPlayer; }
-
-        public RenderLayer GetRenderLayer() { return RenderLayer.entity; }
-
-        public void RenderSelf(Graphics inGraphics, Rectangle viewPort) {
-            int i = 0;
-            while (i < balls.Count()) {
-                bool deletedThisBall = false;
-                Color currentBallColor = Color.FromArgb(255, 255, 255);
-                if (balls[i].exploding > explodeThreshold) {
-                    deletedThisBall = true;
-                } else if (balls[i].exploding > 0) {
-                    balls[i].bounds.Width *= 5;
-                    balls[i].bounds.Height *= 5;
-                    explosion = new Rectangle(balls[i].bounds.X - balls[i].bounds.Width / 2,
-                        balls[i].bounds.Y - balls[i].bounds.Height / 2, balls[i].bounds.Width, balls[i].bounds.Height);
-                    inGraphics.DrawImage(explosionImage, explosion);
-                } else if(balls[i].solidifying > solidifyThreshold) {
-                    deletedThisBall = true;
-                } else if(balls[i].solidifying > 0) {
-                    currentBallColor = Color.FromArgb(0, 0, 0);
-                    Brush currentBallBrush = new SolidBrush(currentBallColor);
-                    balls[i].bounds.Width /= 2;
-                    balls[i].bounds.Height /= 2;
-                    inGraphics.FillEllipse(currentBallBrush, balls[i].bounds);
-                } else {
-                    Brush currentBallBrush = new SolidBrush(currentBallColor);
-                    inGraphics.FillEllipse(currentBallBrush, balls[i].bounds);
-                }
-                if (!player.invincible && balls[i].bounds.IntersectsWith(player.bounds)) {
-                    player.invincible = true;
-                    player.health -= 1;
-                    if(player.health <= 0){
-                        stateManager.ballVictory(inputManager, stateManager);
-                    }else {
-                        player.image = Image.FromFile(String.Format("../../images/charHealth-{0}.png", player.health));
-                    }
-                }
-
-                if (deletedThisBall) { balls.Remove(balls[i]); } 
-                else { i++; }
-            }
-        }
-
+        /// <summary>
+        /// BallManager's Startup method is in charge of randomly spawning a ball on a rock in the landscape 
+        /// and determining a random direction for it to travel in
+        /// </summary>
         public void Start() {
             balls = new List<Ball>();
-            for(int ball = 0; ball < ballCount; ball++) {
+            for (int ball = 0; ball < ballCount; ball++) {
                 while (true) {
                     int row = rand.Next(3, landscape.landscapeHeight - 3);
                     int col = rand.Next(3, landscape.landscapeWidth - 3);
@@ -91,74 +60,62 @@ namespace Engine.GameObjects.ObjectTypes {
                 }
             }
         }
+        #endregion
 
+        #region T I C K
+        /// <summary>
+        /// The BallManager's tick method simply calls the move method on all the balls
+        /// </summary>
         public void Tick() {
             foreach (Ball ball in balls) {
-                ball.bounceTime++;
-                ball.bounds.Width = landscape.pixelWidthPerTile;
-                ball.bounds.Height = landscape.pixelWidthPerTile;
-
-                if (ball.exploding == explodeThreshold) {
-                    if ((ball.landscapeCol > 2 && ball.landscapeCol < landscape.landscapeWidth - 2) &&
-                    (ball.landscapeRow > 2 && ball.landscapeRow < landscape.landscapeHeight - 2)) {
-                        for (int row = -2; row < 3; row++) {
-                            for (int col = -1; col < 2; col++) {
-                                landscape.tilesMap[ball.landscapeRow + row][ball.landscapeCol + col].tileType = LandscapeType.dirt;
-                            }
-                        }
-                    }
-                    ball.exploding++;
-                } else if (ball.exploding > 0) {
-                    ball.exploding++;
-                }
-
-                if (ball.solidifying == solidifyThreshold) {
-                    if ((ball.landscapeCol > 2 && ball.landscapeCol < landscape.landscapeWidth - 2) &&
-                    (ball.landscapeRow > 2 && ball.landscapeRow < landscape.landscapeHeight - 2)) {
-                        for (int row = -2; row < 3; row++) {
-                            for (int col = -1; col < 2; col++) {
-                                landscape.tilesMap[ball.landscapeRow + row][ball.landscapeCol + col].tileType = LandscapeType.rock;
-                            }
-                        }
-                    }
-                    ball.solidifying++;
-                } else if (ball.solidifying > 0) {
-                    ball.solidifying++;
-                }
-
-                if (ball.bounds.X < 0 && ball.bounds.Y < 0 && landscape.pixelHeightPerTile > 0) {
-                    ball.bounds.X = (ball.landscapeCol * landscape.pixelWidthPerTile);
-                    ball.bounds.Y = (ball.landscapeRow * landscape.pixelHeightPerTile);
-                }else {
-                    if(ball.bounceTime > ball.bounceCooldown){
-                        if (ball.bounds.X <= 0 || ball.bounds.Right >= landscape.landscapeWidth * landscape.pixelWidthPerTile){
-                            ball.headingDirection[0] *= -1;
-                            ball.bounceTime = 0;
-                        }
-                        if (ball.bounds.Y <= 0 || ball.bounds.Bottom >= landscape.landscapeHeight * landscape.pixelHeightPerTile){
-                            ball.headingDirection[1] *= -1;
-                            ball.bounceTime = 0;
-                        }
-                    }
-                    ball.bounds.X = (int)(ball.bounds.X + ball.headingDirection[0]);
-                    ball.bounds.Y = (int)(ball.bounds.Y + ball.headingDirection[1]);
-                    //mouse influence
-                    //ball.bounds.X = (int)(ball.bounds.X + (inputManager.mouseCoords[0] - ball.bounds.X) * 0.008);
-                    //ball.bounds.Y = (int)(ball.bounds.Y + (inputManager.mouseCoords[1] - ball.bounds.Y) * 0.008);
-                }
-                if(landscape.pixelWidthPerTile != 0 && landscape.pixelHeightPerTile != 0){
-                    ball.landscapeCol = (ball.bounds.X + (ball.bounds.Width / 2)) / landscape.pixelWidthPerTile;
-                    ball.landscapeRow = (ball.bounds.Y + (ball.bounds.Height / 2)) / landscape.pixelHeightPerTile;                        
-                }
-                if((inputManager.mouseCoords[0] > ball.bounds.X && inputManager.mouseCoords[0] < ball.bounds.X + ball.bounds.Width) &&
-                   (inputManager.mouseCoords[1] > ball.bounds.Y && inputManager.mouseCoords[1] < ball.bounds.Y + ball.bounds.Height)){
-                    if (inputManager.clickDown && ball.exploding == 0 && ball.solidifying == 0) {
-                        ball.exploding = 1;
-                    }else if (inputManager.rightClickDown && ball.exploding == 0 && ball.solidifying == 0) {
-                        ball.solidifying = 1;
-                    }
-                }
+                ball.DoMove(player, landscape, inputManager, stateManager, explodeThreshold);
             }
         }
-    }
+        #endregion
+
+        #region R E N D E R I N G
+        /// <summary>
+        /// The ball's renderSelf method renders each ball in the list and 
+        /// takes care of destroying any balls that were marked for destruction in the last tick
+        /// </summary>
+        /// <param name="inGraphics">The graphics given to the GameObject by the form</param>
+        /// <param name="viewPort">The rectangle representing the current screen size</param>
+        public void RenderSelf(Graphics inGraphics, Rectangle viewPort) {
+            int i = 0;//int iterator used instead of for loop due to deletion of 
+            while (i < balls.Count()) {//L O O P through list of balls.
+                bool deleteBall = false;
+
+                //draw the ball e x p l o d i n g
+                if (balls[i].exploding > explodeThreshold) {
+                    deleteBall = true;
+                } else if (balls[i].exploding > 0) {
+                    explosion = new Rectangle(balls[i].bounds.X - balls[i].bounds.Width / 2,
+                        balls[i].bounds.Y - balls[i].bounds.Height / 2, balls[i].bounds.Width, balls[i].bounds.Height);
+                    inGraphics.DrawImage(explosionImage, explosion);
+                }//E N D exploding
+
+                //draw the ball s o l i d i f y i n g
+                else if (balls[i].solidifying > solidifyThreshold) {
+                    deleteBall = true;
+                } else if (balls[i].solidifying > 0) {
+                    Brush currentBallBrush = new SolidBrush(Color.Black);
+                    balls[i].bounds.Width /= 2;
+                    balls[i].bounds.Height /= 2;
+                    inGraphics.FillEllipse(currentBallBrush, balls[i].bounds);
+                }//E N D solidifying
+
+                else {//draw the ball n o r m a l l y
+                    Brush currentBallBrush = new SolidBrush(Color.White);
+                    inGraphics.FillEllipse(currentBallBrush, balls[i].bounds);
+                }
+                //delete the ball if need be
+                if (deleteBall) { balls.Remove(balls[i]); } else { i++; }
+            }//E N D looping through balls
+        }//E N D method RenderSelf
+
+        public RenderLayer GetRenderLayer() {
+            return RenderLayer.entity;
+        }
+        #endregion
+    }//E N D class
 }
