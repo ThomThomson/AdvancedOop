@@ -74,7 +74,7 @@ namespace Engine.Managers {
             gameTimer.Enabled = false;
             level++;
             parentForm.subMessage = "";
-            parentForm.message = "VICTORY. Press enter to load level " + level;
+            parentForm.message = "Player 1 wins. Press enter to load level " + level;
             ballsNum += 5;
         }
 

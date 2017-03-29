@@ -15,7 +15,7 @@ namespace Engine {
         public Managers.InputManager Inputs;
 
         public string message = "";
-        public string failureMessage = "You hecked up. Press enter to restart game";
+        public string failureMessage = "Player 2 wins! Press enter to restart game";
         public string startupMessage = "P A T H B U I L D E R";
         public string startupSubMessage = "press enter to start \nPlayer 1 uses the Keyboard. Get to the blue square\n" +
                                           "\tControls:\n" +
@@ -24,7 +24,7 @@ namespace Engine {
                                           "Player 2 uses the Mouse. Kill player 1\n" +
                                           "\tControls:\n" +
                                           "\tLeft click on a ball for an explosion\n" +
-                                          "\tRight click on a ball to spawn bedrock\n";
+                                          "\tRight click on a ball to spawn unbreakable bedrock\n";
 
         public string subMessage = "";
 

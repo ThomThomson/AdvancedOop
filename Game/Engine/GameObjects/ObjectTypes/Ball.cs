@@ -55,8 +55,8 @@ namespace Engine.GameObjects.ObjectTypes {
 
             //handle E x p l o s i o n s
             if (exploding == threshold) {
-                if ((landscapeCol > 2 && landscapeCol < landscape.landscapeWidth - 2) &&
-                (landscapeRow > 2 && landscapeRow < landscape.landscapeHeight - 2)) {
+                if ((landscapeCol > 0 && landscapeCol < landscape.landscapeWidth - 1) &&
+                (landscapeRow > 0 && landscapeRow < landscape.landscapeHeight - 1)) {
                     for (int row = -2; row < 3; row++) {
                         for (int col = -1; col < 2; col++) {
                             landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.dirt;
@@ -74,8 +74,8 @@ namespace Engine.GameObjects.ObjectTypes {
 
             //handle S o l i d i f y i n g
             if (solidifying == threshold) {
-                if ((landscapeCol > 2 && landscapeCol < landscape.landscapeWidth - 2) &&
-                (landscapeRow > 2 && landscapeRow < landscape.landscapeHeight - 2)) {
+                if ((landscapeCol > 1 && landscapeCol < landscape.landscapeWidth - 1) &&
+                (landscapeRow > 1 && landscapeRow < landscape.landscapeHeight - 1)) {
                     for (int row = -2; row < 3; row++) {
                         for (int col = -1; col < 2; col++) {
                             landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.bedrock;
@@ -105,8 +105,8 @@ namespace Engine.GameObjects.ObjectTypes {
                 bounds.X = (int)(bounds.X + headingDirection[0]);
                 bounds.Y = (int)(bounds.Y + headingDirection[1]);
                 //mouse influence (IT'S A FEATURE)
-                //ball.bounds.X = (int)(ball.bounds.X + (inputManager.mouseCoords[0] - ball.bounds.X) * 0.008);
-                //ball.bounds.Y = (int)(ball.bounds.Y + (inputManager.mouseCoords[1] - ball.bounds.Y) * 0.008);
+                //bounds.X = (int)(bounds.X + (inputManager.mouseCoords[0] - bounds.X) * 0.008);
+                //bounds.Y = (int)(bounds.Y + (inputManager.mouseCoords[1] - bounds.Y) * 0.008);
             }
             if (landscape.pixelWidthPerTile != 0 && landscape.pixelHeightPerTile != 0) {
                 landscapeCol = (bounds.X + (bounds.Width / 2)) / landscape.pixelWidthPerTile;
