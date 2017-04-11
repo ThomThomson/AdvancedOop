@@ -55,8 +55,8 @@ namespace Engine.GameObjects.ObjectTypes {
 
             //handle E x p l o s i o n s
             if (exploding == threshold) {
-                if ((landscapeCol > 0 && landscapeCol < landscape.landscapeWidth - 1) &&
-                (landscapeRow > 0 && landscapeRow < landscape.landscapeHeight - 1)) {
+                if ((landscapeCol > 2 && landscapeCol < landscape.landscapeWidth - 2) &&
+                (landscapeRow > 2 && landscapeRow < landscape.landscapeHeight - 2)) {
                     for (int row = -2; row < 3; row++) {
                         for (int col = -1; col < 2; col++) {
                             landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.dirt;
@@ -74,8 +74,8 @@ namespace Engine.GameObjects.ObjectTypes {
 
             //handle S o l i d i f y i n g
             if (solidifying == threshold) {
-                if ((landscapeCol > 1 && landscapeCol < landscape.landscapeWidth - 1) &&
-                (landscapeRow > 1 && landscapeRow < landscape.landscapeHeight - 1)) {
+                if ((landscapeCol > 2 && landscapeCol < landscape.landscapeWidth - 2) &&
+                (landscapeRow > 2 && landscapeRow < landscape.landscapeHeight - 2)) {
                     for (int row = -2; row < 3; row++) {
                         for (int col = -1; col < 2; col++) {
                             landscape.tilesMap[landscapeRow + row][landscapeCol + col].tileType = LandscapeType.bedrock;
